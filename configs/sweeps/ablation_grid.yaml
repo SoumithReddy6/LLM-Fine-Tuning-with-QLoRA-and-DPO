@@ -1,0 +1,16 @@
+models:
+  - meta-llama/Meta-Llama-3-8B-Instruct
+  - Qwen/Qwen2.5-7B-Instruct
+learning_rates:
+  - 0.00005
+  - 0.0001
+  - 0.0002
+  - 0.0003
+lora_ranks:
+  - 8
+  - 16
+  - 32
+data_mixtures:
+  - flue_100
+  - flue_80_openorca_20
+  - flue_60_openorca_40

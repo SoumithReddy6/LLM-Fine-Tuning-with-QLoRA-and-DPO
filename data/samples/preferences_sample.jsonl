@@ -1,0 +1,4 @@
+{"id":"pref-001","prompt":"Classify the financial sentiment as negative, neutral, or positive.\nText: Revenue rose 18% as enterprise demand accelerated and guidance was raised for the next quarter.\nLabel:","chosen":"positive","rejected":"neutral"}
+{"id":"pref-002","prompt":"Classify the financial sentiment as negative, neutral, or positive.\nText: The company missed earnings expectations and warned that margin pressure would continue.\nLabel:","chosen":"negative","rejected":"positive"}
+{"id":"pref-003","prompt":"Classify the financial sentiment as negative, neutral, or positive.\nText: Management reiterated its full-year outlook and reported stable customer retention.\nLabel:","chosen":"neutral","rejected":"positive"}
+{"id":"pref-004","prompt":"Classify the financial sentiment as negative, neutral, or positive.\nText: The issuer disclosed a covenant breach and is negotiating a waiver with lenders.\nLabel:","chosen":"negative","rejected":"neutral"}

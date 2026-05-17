@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+artifacts/
+mlruns/
+wandb/
+outputs/
+checkpoints/
+.DS_Store

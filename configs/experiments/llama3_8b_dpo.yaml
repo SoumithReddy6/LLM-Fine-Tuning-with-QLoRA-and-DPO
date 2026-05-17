@@ -1,0 +1,33 @@
+experiment_name: llama3_8b_dpo_financial_sentiment
+task: financial_sentiment
+stage: dpo
+model:
+  name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
+  sft_adapter_path: outputs/llama3_8b_qlora_rank16
+  trust_remote_code: false
+dataset:
+  preference_path: data/samples/preferences_sample.jsonl
+training:
+  output_dir: outputs/llama3_8b_dpo
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.00005
+  beta: 0.1
+  max_prompt_length: 768
+  max_length: 1024
+  logging_steps: 10
+  save_steps: 250
+  bf16: true
+qlora:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: bfloat16
+  bnb_4bit_use_double_quant: true
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+tracking:
+  mlflow_experiment: qlora-dpo-financial-sentiment
+  wandb_project: qlora-dpo-financial-sentiment

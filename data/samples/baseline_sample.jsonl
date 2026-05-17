@@ -1,0 +1,8 @@
+{"id":"fin-001","label":"positive","prediction":"positive","confidence":0.82,"latency_ms":2200}
+{"id":"fin-002","label":"negative","prediction":"neutral","confidence":0.54,"latency_ms":2100}
+{"id":"fin-003","label":"neutral","prediction":"neutral","confidence":0.67,"latency_ms":2050}
+{"id":"fin-004","label":"positive","prediction":"positive","confidence":0.71,"latency_ms":2300}
+{"id":"fin-005","label":"negative","prediction":"negative","confidence":0.73,"latency_ms":2250}
+{"id":"fin-006","label":"neutral","prediction":"neutral","confidence":0.63,"latency_ms":2150}
+{"id":"fin-007","label":"positive","prediction":"neutral","confidence":0.52,"latency_ms":2190}
+{"id":"fin-008","label":"negative","prediction":"negative","confidence":0.79,"latency_ms":2260}

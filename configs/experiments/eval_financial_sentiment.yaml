@@ -1,0 +1,12 @@
+experiment_name: eval_financial_sentiment
+task: financial_sentiment
+labels:
+  - negative
+  - neutral
+  - positive
+evaluation:
+  predictions_path: data/samples/predictions_sample.jsonl
+  baseline_path: data/samples/baseline_sample.jsonl
+  output_path: artifacts/evaluation_metrics.json
+tracking:
+  mlflow_experiment: qlora-dpo-financial-sentiment
