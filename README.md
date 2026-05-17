@@ -10,7 +10,6 @@
 
 Reproducible fine-tuning project for financial sentiment classification using QLoRA supervised fine-tuning, DPO preference optimization, and evaluation against zero-shot GPT-4-style baselines.
 
-The project is designed for Applied AI Engineer and research-facing roles where fine-tuning, adapter training, preference optimization, experiment tracking, and benchmark discipline matter more than a toy demo.
 
 ## What It Builds
 
