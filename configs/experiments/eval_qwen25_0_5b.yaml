@@ -1,0 +1,14 @@
+experiment_name: eval_qwen25_0_5b_financial_sentiment
+task: financial_sentiment
+labels:
+  - negative
+  - neutral
+  - positive
+# Scores the fine-tuned model's predictions against the zero-shot base baseline.
+# Both files are produced by scripts/predict.py (run with and without --adapter).
+evaluation:
+  predictions_path: artifacts/tuned_preds.jsonl
+  baseline_path: artifacts/baseline_preds.jsonl
+  output_path: artifacts/eval_qwen25_0_5b.json
+tracking:
+  mlflow_experiment: qlora-dpo-financial-sentiment

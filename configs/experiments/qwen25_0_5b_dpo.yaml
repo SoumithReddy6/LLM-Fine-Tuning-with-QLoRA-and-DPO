@@ -1,0 +1,44 @@
+experiment_name: qwen25_0_5b_dpo_financial_sentiment
+task: financial_sentiment
+stage: dpo
+# DPO starts from the SFT adapter trained by qwen25_0_5b_qlora_rank16.yaml.
+# Preference pairs come from scripts/prepare_financial_phrasebank.py.
+model:
+  name_or_path: Qwen/Qwen2.5-0.5B-Instruct
+  sft_adapter_path: outputs/qwen25_0_5b_qlora_rank16
+  trust_remote_code: true
+dataset:
+  preference_path: data/financial_preferences.jsonl
+training:
+  output_dir: outputs/qwen25_0_5b_dpo
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00005
+  beta: 0.1
+  max_prompt_length: 256
+  max_length: 320
+  logging_steps: 10
+  save_steps: 500
+  bf16: true
+  report_to: []          # set to ["wandb"] to enable the W&B dashboard
+qlora:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: bfloat16
+  bnb_4bit_use_double_quant: true
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+tracking:
+  mlflow_experiment: qlora-dpo-financial-sentiment
+  wandb_project: qlora-dpo-financial-sentiment

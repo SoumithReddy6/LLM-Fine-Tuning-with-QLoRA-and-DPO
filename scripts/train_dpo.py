@@ -49,7 +49,8 @@ def main() -> None:
         logging_steps=int(training_config.get("logging_steps", 10)),
         save_steps=int(training_config.get("save_steps", 250)),
         bf16=bool(training_config.get("bf16", True)),
-        report_to=["mlflow", "wandb"],
+        # Configurable so a first run does not hit a Weights & Biases login wall.
+        report_to=list(training_config.get("report_to", [])) or "none",
     )
     trainer = DPOTrainer(
         model=model,

@@ -1,0 +1,46 @@
+experiment_name: qwen25_0_5b_qlora_rank16_financial_sentiment
+task: financial_sentiment
+stage: sft
+# Small model sized for a free Colab T4 GPU. The QLoRA method here is identical
+# to the 7B/8B configs; only the model size changes. Use --local-data with the
+# JSONL produced by scripts/prepare_financial_phrasebank.py.
+model:
+  name_or_path: Qwen/Qwen2.5-0.5B-Instruct
+  trust_remote_code: true
+dataset:
+  source: financial_phrasebank
+  text_field: text
+  label_field: label
+  max_train_samples: 2000
+training:
+  output_dir: outputs/qwen25_0_5b_qlora_rank16
+  num_train_epochs: 1
+  per_device_train_batch_size: 8
+  gradient_accumulation_steps: 2
+  learning_rate: 0.0002
+  warmup_ratio: 0.03
+  max_seq_length: 256
+  logging_steps: 10
+  save_steps: 500
+  bf16: true
+  report_to: []          # set to ["wandb"] to enable the W&B dashboard
+qlora:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: bfloat16
+  bnb_4bit_use_double_quant: true
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+tracking:
+  mlflow_experiment: qlora-dpo-financial-sentiment
+  wandb_project: qlora-dpo-financial-sentiment
