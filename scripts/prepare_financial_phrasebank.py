@@ -52,7 +52,15 @@ def main() -> None:
     from datasets import load_dataset
 
     # financial_phrasebank ships a single split; we make our own held-out test set.
-    dataset = load_dataset("financial_phrasebank", args.config_name, split="train")
+    # It loads via a dataset script, so modern `datasets` requires trust_remote_code.
+    try:
+        dataset = load_dataset(
+            "financial_phrasebank", args.config_name, split="train", trust_remote_code=True
+        )
+    except Exception as primary_error:
+        # Fallback: a script-free Parquet mirror with the same schema (sentence/label).
+        print(f"Primary load failed ({primary_error}); trying a Parquet mirror...")
+        dataset = load_dataset("takala/financial_phrasebank", args.config_name, split="train", trust_remote_code=True)
 
     rows = [
         {"id": f"fpb-{i}", "text": str(example["sentence"]).strip(), "label": LABEL_BY_INT[int(example["label"])]}
