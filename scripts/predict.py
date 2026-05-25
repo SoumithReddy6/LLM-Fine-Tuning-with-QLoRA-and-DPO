@@ -70,6 +70,15 @@ def main() -> None:
 
     model = AutoModelForCausalLM.from_pretrained(args.base_model, **model_kwargs)
     if args.adapter:
+        # Fail clearly if the adapter folder is missing locally. Otherwise PEFT
+        # tries to fetch it from the Hugging Face Hub and raises a confusing 401.
+        adapter_dir = Path(args.adapter)
+        if not (adapter_dir / "adapter_config.json").exists():
+            raise FileNotFoundError(
+                f"No trained adapter at '{args.adapter}'. Run the training step that "
+                f"produces it before predicting (e.g. scripts/train_sft.py or "
+                f"scripts/train_dpo.py). Looked for {adapter_dir / 'adapter_config.json'}."
+            )
         from peft import PeftModel
 
         model = PeftModel.from_pretrained(model, args.adapter)
