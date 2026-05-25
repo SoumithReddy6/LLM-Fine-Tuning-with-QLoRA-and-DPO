@@ -105,19 +105,38 @@ Evaluate:
 python3 scripts/evaluate_model.py --config configs/experiments/eval_financial_sentiment.yaml
 ```
 
-## Metrics
+## Results (real run)
 
-| Metric | Target | Current repo status | Reproduction |
-| --- | ---: | --- | --- |
-| Improvement over zero-shot GPT-4 baseline | 20%+ | Harness computes lift from baseline file | `scripts/evaluate_model.py` |
-| Benchmark task scores documented | 8+ | 8 metrics implemented and documented | `docs/evaluation_plan.md` |
-| MLflow experiment runs | 50+ | 72-run ablation grid generated from config | `scripts/generate_ablation_manifest.py` |
-| QLoRA adapters | rank-16 default | Llama 3 and Qwen2.5 configs included | `configs/experiments/*.yaml` |
-| DPO post-training | required | DPO script and preference-pair builder included | `scripts/train_dpo.py` |
-| Reproducible training scripts | required | SFT, DPO, eval, baseline, ablation scripts included | `scripts/` |
-| Technical writeup | required | Blog draft included | `docs/blog_post.md` |
+Fine-tuned `Qwen/Qwen2.5-0.5B-Instruct` with QLoRA (4-bit NF4, LoRA rank-16) on
+Financial PhraseBank — ~2,000 train / 970 held-out test examples — on a single
+free Colab T4 GPU. Reproduce with [`notebooks/colab_quickstart.ipynb`](notebooks/colab_quickstart.ipynb).
 
-The target performance numbers require GPU execution. This repository includes deterministic smoke tests so the code path can be validated locally before spending GPU time.
+| Metric | Fine-tuned (QLoRA SFT) | Base model, zero-shot |
+| --- | ---: | ---: |
+| Accuracy (970 held-out) | **80.8%** | 25.4% |
+| Macro-F1 | 0.80 | — |
+| Expected calibration error | 0.044 | — |
+| Invalid-output rate | 0.3% | — |
+| Mean latency / example | 336 ms | — |
+
+Fine-tuning lifted held-out accuracy from 25% (zero-shot) to 81% and drove the
+invalid-output rate to 0.3% — the model learned both the task and clean label
+formatting. Main error mode is neutral↔positive confusion (see
+[`docs/results.md`](docs/results.md) for the full confusion matrix). The base
+zero-shot score is low because a 0.5B base model does not follow the label
+format without tuning.
+
+The QLoRA/DPO method here is identical for the larger `configs/experiments/`
+models (Qwen2.5-7B, Llama 3 8B); only model size and GPU requirements change.
+
+### Engineering surface
+
+| Capability | Status |
+| --- | --- |
+| Metrics implemented (accuracy, macro-F1, ECE, Brier, invalid-rate, hallucination proxy, latency, lift) | 8, see `docs/evaluation_plan.md` |
+| Ablation grid generator | 72-run manifest via `scripts/generate_ablation_manifest.py` |
+| SFT / DPO / predict / eval / baseline scripts | `scripts/` |
+| QLoRA adapters | rank-16 default, configs for 0.5B / 7B / 8B |
 
 ## Datasets And Models
 
