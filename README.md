@@ -134,9 +134,46 @@ models (Qwen2.5-7B, Llama 3 8B); only model size and GPU requirements change.
 | Capability | Status |
 | --- | --- |
 | Metrics implemented (accuracy, macro-F1, ECE, Brier, invalid-rate, hallucination proxy, latency, lift) | 8, see `docs/evaluation_plan.md` |
-| Ablation grid generator | 72-run manifest via `scripts/generate_ablation_manifest.py` |
+| Ablation grid generator | 72-run grid via `scripts/generate_ablation_manifest.py` (config-generated; logged via MLflow `report_to` when the sweep runs on GPU) |
 | SFT / DPO / predict / eval / baseline scripts | `scripts/` |
 | QLoRA adapters | rank-16 default, configs for 0.5B / 7B / 8B |
+
+## Serving (inference API)
+
+The fine-tuned model is served behind a FastAPI endpoint — the deployment stage
+of the lifecycle. Two backends, one contract:
+
+```bash
+# Local free demo (no GPU, no adapter): base model via Ollama
+ollama pull qwen2.5:0.5b
+MODEL_BACKEND=ollama uvicorn qlora_dpo_finance.api:app --port 8000
+
+# Serve the actual fine-tuned model: download the adapter from the Colab run
+# (notebook step 11 -> qlora_adapter.zip), unzip to outputs/qwen25_0_5b_qlora_rank16
+MODEL_BACKEND=transformers ADAPTER_PATH=outputs/qwen25_0_5b_qlora_rank16 \
+  uvicorn qlora_dpo_finance.api:app --port 8000
+
+curl -X POST localhost:8000/predict -H 'Content-Type: application/json' \
+  -d '{"text": "The company reported record profits and raised guidance."}'
+# -> {"label": "positive", "confidence": ..., "latency_ms": ..., "backend": ...}
+```
+
+`GET /health`, `POST /predict`, `POST /predict/batch`. Tests run against a mock
+backend (no Ollama/model needed in CI).
+
+## Lifecycle coverage
+
+| Stage | Status |
+| --- | --- |
+| Data (prep + held-out split) | ✅ `scripts/prepare_financial_phrasebank.py` |
+| Training (QLoRA SFT + DPO) | ✅ reproducible configs, 0.5B/7B/8B |
+| Evaluation (accuracy/F1/ECE + baseline) | ✅ real run, 80.8% vs 25.4% |
+| Experiment tracking | ✅ MLflow via `report_to`; sweep grid generated from config |
+| Packaging | ✅ LoRA adapter save/load |
+| Serving (REST inference) | ✅ FastAPI, dual backend |
+| Containerization | ✅ Dockerfile |
+| CI + tests | ✅ 10 tests, offline |
+| Deployment / monitoring | ⬜ next: cloud deploy + prediction-drift logging |
 
 ## Datasets And Models
 
