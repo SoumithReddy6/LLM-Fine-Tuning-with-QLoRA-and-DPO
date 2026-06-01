@@ -98,7 +98,7 @@ The pipeline has two training stages (SFT then DPO), an evaluation stage that co
 
 ## How It Works — Concepts Explained
 
-This section explains every concept a newcomer needs to understand the project. If you can explain these out loud, you understand the system.
+
 
 ### Fine-tuning, and why not just prompt a big model?
 
